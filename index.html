@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명신여고 1학년 코딩 포트폴리오</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 커스텀 스타일 및 폰트 설정 */
+        /* 나눔고딕 폰트 임포트 */
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
+        
+        body {
+            font-family: 'Nanum Gothic', 'Noto Sans KR', sans-serif; /* 나눔고딕으로 변경 */
+            background-color: #f8f4ff; /* 쿨톤 베이비 핑크/연한 라벤더 배경 */
+            color: #333333; /* 기본 글씨색을 진하게 하여 가독성 확보 */
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #a78bfa, #f472b6); /* 쿨톤 라벤더-핑크 그라디언트 */
+            position: relative;
+            overflow: hidden; 
+        }
+        /* 헤더의 아기자기한 패턴을 위한 가상 요소 (색상 톤만 조정) */
+        .header-bg::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            /* 쿨톤 화이트 도트 패턴 */
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 15%) 0 0 / 25px 25px,
+                        radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 15%) 12.5px 12.5px / 25px 25px;
+            opacity: 0.7;
+            transform: rotate(10deg); 
+            pointer-events: none;
+        }
+
+        .card-shadow {
+            box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.3); /* 라벤더/보라색 그림자 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 1rem; /* 모서리를 약간 덜 둥글게, 깔끔하게 */
+            border: 1px solid #e0d9fa; /* 연한 라벤더 테두리 */
+        }
+        .card-shadow:hover {
+            transform: translateY(-6px); /* 부드럽게 떠오르는 효과 */
+            box-shadow: 0 15px 30px -8px rgba(139, 92, 246, 0.5);
+        }
+        .filter-button {
+            background-color: #ffffff; /* 흰색 버튼 */
+            color: #8b5cf6; /* 쿨톤 메인 색상 */
+            border: 1px solid #d4c0ff;
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-button.active, .filter-button:hover {
+            background-color: #8b5cf6; /* 활성/호버 시 쿨톤 보라색 */
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+        }
+        .project-link-button {
+            background-color: #8b5cf6; /* 쿨톤 보라색 */
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        .project-link-button:hover:not(.cursor-not-allowed) {
+            background-color: #7c3aed; /* 호버 시 더 진한 쿨톤 보라색 */
+        }
+        .text-cool-accent {
+            color: #8b5cf6; /* 쿨톤 보라색 */
+        }
+        .bg-cool-light {
+             background-color: #f8f4ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="header-bg text-white py-16 sm:py-20">
+        <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
+            <!-- 메인 제목 --><h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 drop-shadow-lg">
+                명신여고 1학년 코딩 포트폴리오
+            </h1>
+            <!-- 부제목 --><p class="text-xl sm:text-2xl font-light opacity-90 mb-6 drop-shadow-md">
+                반짝이는 아이디어로 만들어가는 나만의 코딩 세상
+            </p>
+            <!-- 소속 정보 (자리 표시자) --><div class="mt-4">
+                <span class="inline-block bg-white text-cool-accent px-4 py-2 rounded-full shadow-lg font-bold text-lg animate-pulse-slow">
+                    명신여자고등학교 1학년
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-12 px-4">
+        
+        <!-- 작품 필터링 섹션 --><section class="mb-10 flex flex-wrap justify-center gap-4">
+            <button class="filter-button py-2 px-6 rounded-full shadow-md active" data-filter="All">
+                전체 보기
+            </button>
+            <button class="filter-button py-2 px-6 rounded-full shadow-md" data-filter="App">
+                📱 웹/앱 프로젝트
+            </button>
+            <button class="filter-button py-2 px-6 rounded-full shadow-md" data-filter="Chatbot">
+                💬 챗봇/AI 프로젝트
+            </button>
+            <button class="filter-button py-2 px-6 rounded-full shadow-md" data-filter="Game">
+                🎮 게임 프로젝트
+            </button>
+        </section>
+
+        <!-- 프로젝트 목록이 표시될 그리드 --><section id="project-list" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- 프로젝트 카드들은 JavaScript를 통해 여기에 동적으로 추가됩니다 --></section>
+
+    </main>
+
+    <!-- 푸터 --><footer class="bg-purple-200 text-purple-700 py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-sm">&copy; 2025 명신여고 코딩 포트폴리오. 모든 작품의 저작권은 임채은에게 있습니다.</p>
+            <p class="text-xs mt-2 opacity-80">
+                연락처 정보: chaeeennnn@naver.com | Made with Love by 임채은
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 작품 데이터 배열 (작품을 만들 때마다 이 배열에 추가해 주세요!)
+        const projects = [
+            {
+                id: 1,
+                name: "나만의 첫 번째 챗봇: 급식 메뉴 추천",
+                category: "Chatbot",
+                description: "점심 메뉴 고민을 해결해주는 인공지능 챗봇입니다. 명신여고 식단을 학습하여 추천해 줍니다.",
+                tools: ["Python", "OpenAI API (Placeholder)", "HTML/JS"],
+                link: "#", // 실제 작품 링크로 변경
+                status: "Completed",
+                date: "2025년 11월",
+                color: "bg-fuchsia-400", // 쿨톤 핑크
+                icon: "💬"
+            },
+            {
+                id: 2,
+                name: "반응형 Todo List 웹앱",
+                category: "App",
+                description: "언제 어디서든 할 일을 관리할 수 있는 반응형 웹 애플리케이션입니다. 데이터 저장 기능 포함.",
+                tools: ["HTML", "CSS", "JavaScript"],
+                link: "#",
+                status: "In Progress",
+                date: "2025년 12월",
+                color: "bg-indigo-400", // 쿨톤 인디고
+                icon: "📱"
+            },
+            {
+                id: 3,
+                name: "픽셀 아트 그림판 게임",
+                category: "Game",
+                description: "캔버스 요소를 사용해 나만의 픽셀 아트를 그릴 수 있는 미니 게임/툴입니다.",
+                tools: ["HTML Canvas", "JavaScript"],
+                link: "#",
+                status: "Planning",
+                date: "2026년 1월",
+                color: "bg-teal-400", // 쿨톤 민트
+                icon: "🎮"
+            },
+            // 작품을 추가할 때마다 아래 형식에 맞춰 추가해 주세요!
+            // {
+            //     id: 4,
+            //     name: "새로운 작품 이름",
+            //     category: "App" 또는 "Chatbot" 또는 "Game",
+            //     description: "작품에 대한 간단한 설명",
+            //     tools: ["사용 기술 1", "사용 기술 2"],
+            //     link: "#",
+            //     status: "Completed" 또는 "In Progress" 또는 "Planning",
+            //     date: "날짜",
+            //     color: "bg-[원하는 색상]-400", // 쿨톤 파스텔톤 컬러 추천
+            //     icon: "이모지"
+            // },
+        ];
+
+        const projectListElement = document.getElementById('project-list');
+        const filterButtons = document.querySelectorAll('.filter-button');
+
+        // 상태에 따른 배지 스타일 설정 함수 (이모지 제거)
+        function getStatusBadge(status) {
+            let colorClass = '';
+            let text = '';
+            if (status === 'Completed') {
+                colorClass = 'bg-fuchsia-100 text-fuchsia-700'; // 쿨톤 핑크 계열
+                text = '완료';
+            } else if (status === 'In Progress') {
+                colorClass = 'bg-indigo-100 text-indigo-700'; // 쿨톤 보라 계열
+                text = '진행 중';
+            } else {
+                colorClass = 'bg-gray-200 text-gray-700';
+                text = '계획 중';
+            }
+            return `<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${colorClass}">${text}</span>`;
+        }
+
+        // 프로젝트 카드를 생성하고 렌더링하는 함수
+        function renderProjects(filter = 'All') {
+            projectListElement.innerHTML = ''; // 기존 목록 초기화
+            
+            const filteredProjects = projects.filter(project => 
+                filter === 'All' || project.category === filter
+            );
+
+            if (filteredProjects.length === 0) {
+                projectListElement.innerHTML = `
+                    <p class="col-span-full text-center text-gray-500 py-10 text-lg">
+                        아직 해당 카테고리의 작품이 없습니다. 새로운 작품을 기대해 주세요!
+                    </p>
+                `;
+                return;
+            }
+
+            filteredProjects.forEach(project => {
+                const badge = getStatusBadge(project.status);
+                
+                const card = document.createElement('article');
+                // 카드 상단 바 색상을 project.color에 지정된 쿨톤 색상으로 변경
+                card.className = `card-shadow bg-white rounded-xl overflow-hidden flex flex-col p-6 border-l-4 border-t-0 border-cool-light`; // border-l-4로 변경
+                card.style.borderLeftColor = project.color.split('-')[1]; // 동적 배경색을 테두리 색상으로 사용
+                card.dataset.category = project.category;
+
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <span class="text-3xl mr-3 leading-none">${project.icon}</span>
+                        <h2 class="text-xl font-bold text-gray-800">${project.name}</h2>
+                    </div>
+                    <div class="mb-4 flex items-center gap-2">
+                        ${badge}
+                        <span class="text-sm text-gray-500">${project.date}</span>
+                    </div>
+                    <p class="text-gray-600 mb-4 flex-grow">${project.description}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            ${project.tools.map(tool => 
+                                `<span class="text-xs font-medium bg-purple-100 text-purple-700 px-2 py-1 rounded-full">${tool}</span>`
+                            ).join('')}
+                        </div>
+                        <a href="${project.link}" target="_blank" class="block text-center w-full project-link-button font-semibold py-2 rounded-lg transition 
+                            ${project.status === 'Planning' ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : ''}" 
+                            ${project.status === 'Planning' ? 'onclick="event.preventDefault();"' : ''}>
+                            ${project.status === 'Planning' ? '작품 준비 중' : '작품 보러가기'}
+                        </a>
+                    </div>
+                `;
+                
+                projectListElement.appendChild(card);
+            });
+        }
+
+        // 필터 버튼 클릭 이벤트 핸들러 설정
+        filterButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const filter = e.target.dataset.filter;
+                
+                // 활성 버튼 스타일 업데이트
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // 프로젝트 렌더링
+                renderProjects(filter);
+            });
+        });
+
+        // 페이지 로드 시 전체 프로젝트 렌더링
+        window.onload = () => {
+            renderProjects('All');
+        };
+    </script>
+</body>
+</html>
