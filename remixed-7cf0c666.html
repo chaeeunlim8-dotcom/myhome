@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>케데헌 스타일 MBTI 테스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .option:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateX(10px);
+        }
+
+        .start-screen, .result-screen {
+            text-align: center;
+        }
+
+        .start-screen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .start-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .result-screen {
+            display: none;
+        }
+
+        .result-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .mbti-result {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+            letter-spacing: 4px;
+        }
+
+        .result-description {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .result-emoji {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .question {
+                font-size: 18px;
+            }
+
+            .option {
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .mbti-result {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="start-screen" id="startScreen">
+            <h1>🎭 케데헌 스타일 MBTI 테스트</h1>
+            <p>진지하지 않은 질문으로 알아보는<br>당신의 찐 성격!</p>
+            <p style="font-size: 14px; color: #999;">총 12개의 질문 | 약 2분 소요</p>
+            <button class="btn" onclick="startTest()">테스트 시작하기</button>
+        </div>
+
+        <div id="testScreen" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+
+            <div class="question-container active" id="q1">
+                <div class="question">친구가 "나 오늘 헤어졌어..."라고 카톡을 보냈다. 당신의 반응은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('E')">즉시 전화 걸어서 "야!! 무슨 일이야?! 지금 어디야?!" (일단 달려감)</div>
+                    <div class="option" onclick="answer('I')">"헐 대박... 괜찮아?" 라고 답장하고 답 올 때까지 기다림</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q2">
+                <div class="question">주말에 갑자기 약속이 취소됐다. 당신의 첫 반응은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('E')">"헐 대박 누구 안 만나? 나갈 사람 찾아야지!" (연락 돌림)</div>
+                    <div class="option" onclick="answer('I')">"오... 혼자 있을 시간이 생겼네" (내심 기쁨)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q3">
+                <div class="question">새로 산 옷을 입고 나갔는데 아무도 몰라봤다. 당신은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('E')">"야 나 오늘 새 옷 샀는데 못 봤어?" (직접 물어봄)</div>
+                    <div class="option" onclick="answer('I')">"...뭐 편한 게 최고지" (속으로 아쉬워함)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q4">
+                <div class="question">내일 중요한 여행을 떠난다. 당신의 준비 스타일은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('S')">짐 목록 작성, 날씨 체크, 교통편 확인, 맛집 리스트까지 완벽 준비</div>
+                    <div class="option" onclick="answer('N')">"여행은 즉흥이지~" 여권만 챙기고 나머지는 현지에서</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q5">
+                <div class="question">"너 점심 뭐 먹고 싶어?" 라는 질문을 받았을 때</div>
+                <div class="options">
+                    <div class="option" onclick="answer('S')">"음... 날씨도 춥고 얼큰한 국물 생각나는데 돈까스도 먹고 싶고..."</div>
+                    <div class="option" onclick="answer('N')">"아무거나~ 막 되게 맛있는 거?" (구체적이지 않음)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q6">
+                <div class="question">영화를 보고 난 후 친구가 "어땠어?" 라고 물으면</div>
+                <div class="options">
+                    <div class="option" onclick="answer('S')">"액션�씬 짱이었고, 주인공 연기 좋았고, 반전도 있었어!"</div>
+                    <div class="option" onclick="answer('N')">"와... 되게 인생이 뭔지 생각하게 되는 영화였어..."</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q7">
+                <div class="question">친구가 고민 상담을 한다. "나 이직 고민 중이야..."</div>
+                <div class="options">
+                    <div class="option" onclick="answer('T')">"연봉은 얼마나 오르는데? 복지는? 통근 시간은?" (논리적 분석)</div>
+                    <div class="option" onclick="answer('F')">"헐... 많이 힘들었구나ㅠㅠ 진짜 고민 많이 했겠다..." (공감 우선)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q8">
+                <div class="question">단톡방에서 친구들이 싸우고 있다. 당신은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('T')">"객관적으로 보면 둘 다 잘못이 있는 것 같은데" (팩트 폭격)</div>
+                    <div class="option" onclick="answer('F')">(몰래 나가서 둘 다 따로 위로) "너도 힘들었지ㅠㅠ"</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q9">
+                <div class="question">길에서 우는 아이를 발견했을 때</div>
+                <div class="options">
+                    <div class="option" onclick="answer('T')">"엄마는 어딨지? 미아센터에 데려다줘야 하나?" (해결책 고민)</div>
+                    <div class="option" onclick="answer('F')">"어머 애기야ㅠㅠ 괜찮아? 엄마 어디갔어?" (일단 달래기)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q10">
+                <div class="question">시험이 2주 남았다. 당신의 공부 스타일은?</div>
+                <div class="options">
+                    <div class="option" onclick="answer('J')">1일차: 1단원, 2일차: 2단원... (계획표 작성 완료)</div>
+                    <div class="option" onclick="answer('P')">"아직 2주나 남았네~" (시험 전날 밤샘 각오)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q11">
+                <div class="question">친구와 약속 시간이 오후 2시일 때</div>
+                <div class="options">
+                    <div class="option" onclick="answer('J')">1시 50분에 도착해서 카페 자리 미리 잡고 기다림</div>
+                    <div class="option" onclick="answer('P')">2시에 집에서 나가기 (어차피 늦는 거 알고 있음)</div>
+                </div>
+            </div>
+
+            <div class="question-container" id="q12">
+                <div class="question">갑자기 친구가 "오늘 저녁에 놀자!" 할 때</div>
+                <div class="options">
+                    <div class="option" onclick="answer('J')">"어... 나 오늘 계획이..." (이미 다른 계획 有)</div>
+                    <div class="option" onclick="answer('P')">"오 좋아!" (어차피 계획 없음)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="result-emoji" id="resultEmoji"></div>
+            <div class="mbti-result" id="mbtiResult"></div>
+            <div class="result-description" id="resultDescription"></div>
+            <button class="btn" onclick="location.reload()">다시 테스트하기</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 12;
+        const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        function startTest() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'block';
+            updateProgress();
+        }
+
+        function answer(type) {
+            scores[type]++;
+            
+            document.getElementById('q' + currentQuestion).classList.remove('active');
+            currentQuestion++;
+
+            if (currentQuestion <= totalQuestions) {
+                document.getElementById('q' + currentQuestion).classList.add('active');
+                updateProgress();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion - 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResult() {
+            const mbti = 
+                (scores.E >= scores.I ? 'E' : 'I') +
+                (scores.S >= scores.N ? 'S' : 'N') +
+                (scores.T >= scores.F ? 'T' : 'F') +
+                (scores.J >= scores.P ? 'J' : 'P');
+
+            const results = {
+                'ISTJ': { emoji: '🏛️', desc: '완벽주의 계획왕! 계획표 없으면 불안한 당신. 친구들이 늦으면 진심 짜증나는 타입.' },
+                'ISFJ': { emoji: '🤱', desc: '세상 친절한 엄마친구. 친구들 고민 상담소. 남 걱정에 정작 본인은 지쳐있음.' },
+                'INFJ': { emoji: '🔮', desc: '신비주의 철학자. "나는 사람을 꿰뚫어본다..." 근데 막상 자기 자신은 모름.' },
+                'INTJ': { emoji: '🧠', desc: '차가운 천재 컨셉. 효율 떨어지는 거 못 참음. 친구들이 "너 너무 차갑다" 소리 자주 들음.' },
+                'ISTP': { emoji: '🔧', desc: '만능 해결사. 뭐든 고칠 줄 알지만 사람 마음은 못 고침. 혼자 있는 게 최고.' },
+                'ISFP': { emoji: '🎨', desc: '예술가 감성. 감성 충만하지만 말로 표현은 못함. 혼자서 드라마 보다 우는 타입.' },
+                'INFP': { emoji: '🦄', desc: '판타지 속 주인공. 머릿속엔 소설 100편. 근데 현실은... 방 정리도 안 함.' },
+                'INTP': { emoji: '🤔', desc: '질문 제조기. 모든 걸 의심함. "근데 그게 왜 그런 거야?" 친구들 지치게 만드는 타입.' },
+                'ESTP': { emoji: '🎢', desc: '액션 중독자. 가만히 있는 거 못 참음. 계획? 그게 뭐죠? 일단 저질러~' },
+                'ESFP': { emoji: '🎉', desc: '파티 피플! 분위기 메이커. 혼자 있으면 죽는 타입. 친구들이 에너지 배터리.' },
+                'ENFP': { emoji: '🌈', desc: '텐션 MAX 인간. 아이디어는 많은데 실행은... 작심삼일의 정석.' },
+                'ENTP': { emoji: '💡', desc: '논쟁왕. 토론하는 거 좋아함. "근데 논리적으로~" 친구들 열받게 만드는 재주.' },
+                'ESTJ': { emoji: '📋', desc: '리더 강제 등극. 단톡방 공지 담당. 친구들이 말 안 들으면 진심 화남.' },
+                'ESFJ': { emoji: '🤗', desc: '인싸의 정석. 모든 친구들 챙김. 근데 본인은 외로움 많이 탐. 혼자 있기 싫어함.' },
+                'ENFJ': { emoji: '✨', desc: '카리스마 폭발. 사람들이 자연스럽게 따름. 근데 속으로 되게 피곤함.' },
+                'ENTJ': { emoji: '👑', desc: '타고난 보스. 효율성이 생명. 느린 사람 보면 답답해서 직접 함. "빨리빨리"가 입버릇.' }
+            };
+
+            document.getElementById('testScreen').style.display = 'none';
+            document.getElementById('resultScreen').classList.add('active');
+            document.getElementById('mbtiResult').textContent = mbti;
+            document.getElementById('resultEmoji').textContent = results[mbti].emoji;
+            document.getElementById('resultDescription').textContent = results[mbti].desc;
+        }
+    </script>
+</body>
+</html>
